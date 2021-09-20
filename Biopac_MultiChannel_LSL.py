@@ -10,7 +10,7 @@ import time
 from pylsl import StreamInfo, StreamOutlet, local_clock
 
 aq_toggle_state = False
-srate = 512
+srate = 500
 
 
 class StreamData:
@@ -92,6 +92,10 @@ def toggle_aquisition():
         print("Keeping the current state \n")
 
 
+def return_nan():
+    return [float("nan"), float("nan"), float("nan"), float("nan"), float("nan")]
+
+
 def send_biopac_data():
     if not aq_toggle_state:
         toggle_aquisition()
@@ -111,8 +115,10 @@ def send_biopac_data():
                 if required_samples > 0:
                     for sample_ix in range(required_samples):
                         # get sample from BIOPAC stream
-                        mysample = stream_data.returnList()[0]  # This is a hack to obtain the list within the list
-                        # now send it
+                        if aq_toggle_state:
+                            mysample = stream_data.returnList()[0]  # This is a hack to obtain the list within the list
+                        else:
+                            mysample = return_nan()
                         stream_outlet.push_sample(mysample)
                         sent_samples += required_samples
                 # now send it and wait for a bit before trying again.
@@ -140,8 +146,9 @@ def tidy_up():
 
 
 def main():
-    start_biopac_server()  # start server
+    start_biopac_server()   # start server
     create_biopac_stream()  # create the stream
+    toggle_aquisition()     # toggle the aquisition
     send_biopac_data()
 
 
