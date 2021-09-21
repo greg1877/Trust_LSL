@@ -7,6 +7,7 @@ Created on Tue Jul  6 12:38:00 2021
 import biopacndt
 import sys
 import time
+import keyboard
 from pylsl import StreamInfo, StreamOutlet, local_clock
 
 aq_toggle_state = False
@@ -30,13 +31,13 @@ class StreamData:
 def start_biopac_server():
     global acq_server, data_server, stream_data
 
-    print("Attempting to connect to Acknowledge \n")
+    print("Attempting to connect to Acknowledge ")
     acq_server = biopacndt.AcqNdtQuickConnect()
     if not acq_server:
-        print("Could not connect to AcqKnowledge Server \n")
+        print("Could not connect to AcqKnowledge Server ")
         sys.exit()
     else:
-        print("Established connection to AcqKnowledge Server \n")
+        print("Established connection to AcqKnowledge Server ")
 
     enabledChannels = acq_server.DeliverAllEnabledChannels()  # Change if only specific channels are required
     singleConnectPort = acq_server.getSingleConnectionModePort()
@@ -47,7 +48,7 @@ def start_biopac_server():
 
     # START THE SERVER
     data_server.Start()
-    print("Aquisition server started ... wait 5 seconds \n")
+    print("Aquisition server started ... wait 5 seconds ")
 
     # %% PRINT SOME CHANNEL INFORMATION
     acq_server.DeliverAllEnabledChannels()
@@ -80,8 +81,8 @@ def create_biopac_stream():
 
 def toggle_aquisition():
     global aq_toggle_state
-    print("Current toggle state is ", aq_toggle_state, "\n")
-    toggle_request = input("Do you want to toggle the Aquisition? Y/N")
+    print("Current toggle state is ", aq_toggle_state)
+    toggle_request = input("Do you want to toggle the Aquisition? Y/N  ")
     if toggle_request.lower() == "y":
         aq_toggle_state = not aq_toggle_state
         acq_server.toggleAcquisition()
@@ -89,7 +90,7 @@ def toggle_aquisition():
         print("Toggle state is ", aq_toggle_state)
         time.sleep(5)
     else:
-        print("Keeping the current state \n")
+        print("Keeping the current state ")
 
 
 def return_nan():
@@ -100,7 +101,7 @@ def send_biopac_data():
     if not aq_toggle_state:
         toggle_aquisition()
     else:
-        send_request = input("Do you want to stream the data? Y/N")
+        send_request = input("Do you want to stream the data? Y/N ")
         if send_request.lower() == "y":
             print("now sending data...")
             print("Press Ctrl-c to stop sending")
@@ -130,26 +131,29 @@ def send_biopac_data():
 def tidy_up():
     # %% TURN OFF THE ACQUISITION FROM THE COMMAND LINE
     acq_server.toggleAcquisition()
-    print("Toggled Biopac Acquisition... wait 5 seconds")
+    print("Toggled Biopac Acquisition... wait 5 seconds ")
     time.sleep(5)
 
     # %% STOP THE SERVER
     data_server.Stop()
-    print("Stopping the data server")
+    print("Stopping the data server ")
     time.sleep(1)
 
     print("Cleaning up...")
     del data_server
     del stream_data
     del acq_server
-    print("All Finished")
+    print("All Finished ")
 
-
+# the channels should be toggled, and when they are, the state
 def main():
     start_biopac_server()   # start server
     create_biopac_stream()  # create the stream
     toggle_aquisition()     # toggle the aquisition
+    # ask to start the aquisition and check the keyboard to see if some key hasn't been pressed.  If the key is pressed,
+    # the aquisition will send null
     send_biopac_data()
+
 
 
 if __name__ == '__main__':

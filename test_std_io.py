@@ -7,6 +7,11 @@ def one_more():
     global x:
     x=1
 
+def on_space():
+    print('space was pressed')
+
+keyboard.add_hotkey('space', on_space)
+
 
 i = 0
 
