@@ -4,6 +4,11 @@ import logging
 import threading
 import time
 
+logging.basicConfig(filename='eat_a_dick.log',level=logging.DEBUG)
+logging.debug('This message should go to the log file')
+logging.info('So should this')
+logging.warning('And this, too')
+
 def thread_function(name):
     logging.info("Thread %s: starting", name)
     time.sleep(2)

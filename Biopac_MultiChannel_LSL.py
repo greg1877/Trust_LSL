@@ -7,12 +7,14 @@ Created on Tue Jul  6 12:38:00 2021
 import biopacndt
 import sys
 import time
+import logging
 import keyboard
 from pylsl import StreamInfo, StreamOutlet, local_clock
 
 aq_toggle_state = False
 srate = 500
 
+logging.basicConfig(filename='lsl.log', level=logging.INFO)
 
 class StreamData:
     def __init__(self, server):
