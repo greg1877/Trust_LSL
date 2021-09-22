@@ -3,27 +3,38 @@
 import logging
 import threading
 import time
+from datetime import datetime
 
-logging.basicConfig(filename='eat_a_dick.log',level=logging.DEBUG)
-logging.debug('This message should go to the log file')
-logging.info('So should this')
-logging.warning('And this, too')
+now = datetime.now()
+current_time = now.strftime("%H:%M:%S")
+print("current time = ", current_time)
+
+log_file_name = "BIOPAC_LSL_" + datetime.now().strftime("%H:%M:%S:%MS") + ".log"
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format='%(asctime)s %(message)s',
+    level=logging.INFO,
+    filename='logs.txt')
+
+logger = logging.getLogger()
+logger.debug('This message should go to the log file')
+logger.info('So should this')
+logger.warning('And this, too')
 
 def thread_function(name):
-    logging.info("Thread %s: starting", name)
+    logger.info("Thread %s: starting", name)
     time.sleep(2)
-    logging.info("Thread %s: finishing", name)
+    logger.info("Thread %s: finishing", name)
 
 
 if __name__ == "__main__":
     format = "%(asctime)s: %(message)s"
-    logging.basicConfig(format=format, level=logging.INFO,
-                        datefmt="%H:%M:%S")
+ #   logger.basicConfig(format=format, level=logging.INFO,
+ #                       datefmt="%H:%M:%S")
 
-    logging.info("Main    : before creating thread")
+    logger.info("Main    : before creating thread")
     x = threading.Thread(target=thread_function, args=(1,))
-    logging.info("Main    : before running thread")
+    logger.info("Main    : before running thread")
     x.start()
-    logging.info("Main    : wait for the thread to finish")
+    logger.info("Main    : wait for the thread to finish")
     # x.join()
-    logging.info("Main    : all done")
+    logger.info("Main    : all done")

@@ -14,7 +14,12 @@ from pylsl import StreamInfo, StreamOutlet, local_clock
 aq_toggle_state = False
 srate = 500
 
-logging.basicConfig(filename='lsl.log', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s %(message)s',
+    level=logging.INFO,
+    filename='logs.txt')
+
+logger = logging.getLogger()
+
 
 class StreamData:
     def __init__(self, server):
@@ -36,10 +41,12 @@ def start_biopac_server():
     print("Attempting to connect to Acknowledge ")
     acq_server = biopacndt.AcqNdtQuickConnect()
     if not acq_server:
+        logger.info("Could not connect to Acknowledge Server")
         print("Could not connect to AcqKnowledge Server ")
         sys.exit()
     else:
-        print("Established connection to AcqKnowledge Server ")
+        logger.info("Established connection to AcqKnowledge Server")
+        print("Established connection to AcqKnowledge Server")
 
     enabledChannels = acq_server.DeliverAllEnabledChannels()  # Change if only specific channels are required
     singleConnectPort = acq_server.getSingleConnectionModePort()
@@ -50,6 +57,7 @@ def start_biopac_server():
 
     # START THE SERVER
     data_server.Start()
+    logger.info("Started Aquisition Server")
     print("Aquisition server started ... wait 5 seconds ")
 
     # %% PRINT SOME CHANNEL INFORMATION
@@ -78,6 +86,7 @@ def create_biopac_stream():
         ch.append_child_value("unit", "microvolts")
         ch.append_child_value("type", label)
 
+    logger.info("Created LSL Stream")
     stream_outlet = StreamOutlet(stream_info)
 
 
@@ -88,6 +97,7 @@ def toggle_aquisition():
     if toggle_request.lower() == "y":
         aq_toggle_state = not aq_toggle_state
         acq_server.toggleAcquisition()
+        logger.info("Toggled Aquisition")
         print("Toggled Biopac Acquisition... wait 5 seconds... ")
         print("Toggle state is ", aq_toggle_state)
         time.sleep(5)
@@ -106,6 +116,7 @@ def send_biopac_data():
         send_request = input("Do you want to stream the data? Y/N ")
         if send_request.lower() == "y":
             print("now sending data...")
+            logger.info("Sending data")
             print("Press Ctrl-c to stop sending")
 
         start_time = local_clock()
