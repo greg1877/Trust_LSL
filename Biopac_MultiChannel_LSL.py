@@ -109,14 +109,14 @@ def return_nan():
     return [float("nan"), float("nan"), float("nan"), float("nan"), float("nan")]
 
 
-def send_biopac_data():
+def send_biopac_data():  ## Make this a thread
     if not aq_toggle_state:
         toggle_aquisition()
     else:
-        send_request = input("Do you want to stream the data? Y/N ")
+        send_request = input("Press Y to begin streaming data")
         if send_request.lower() == "y":
             print("now sending data...")
-            logger.info("Sending data")
+            logger.info("Begin ending data")
             print("Press Ctrl-c to stop sending")
 
         start_time = local_clock()
@@ -144,11 +144,13 @@ def send_biopac_data():
 def tidy_up():
     # %% TURN OFF THE ACQUISITION FROM THE COMMAND LINE
     acq_server.toggleAcquisition()
+    logger.info("Toggled Biopac Acquisition")
     print("Toggled Biopac Acquisition... wait 5 seconds ")
     time.sleep(5)
 
     # %% STOP THE SERVER
     data_server.Stop()
+    logger.info("Stopped data server")
     print("Stopping the data server ")
     time.sleep(1)
 
@@ -156,6 +158,7 @@ def tidy_up():
     del data_server
     del stream_data
     del acq_server
+    logger.info("Cleaned up")
     print("All Finished ")
 
 # the channels should be toggled, and when they are, the state
@@ -166,8 +169,6 @@ def main():
     # ask to start the aquisition and check the keyboard to see if some key hasn't been pressed.  If the key is pressed,
     # the aquisition will send null
     send_biopac_data()
-
-
 
 if __name__ == '__main__':
     main()
