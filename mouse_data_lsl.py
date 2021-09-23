@@ -8,6 +8,15 @@ Created on Tue Jul  6 12:38:00 2021
 import pyautogui
 from pylsl import StreamInfo, StreamOutlet, local_clock
 import pygame
+import logging
+
+logging.basicConfig(format='%(asctime)s %(message)s',
+    level=logging.INFO,
+    filename='mouse_logs.txt')
+
+logger = logging.getLogger()
+srate = 80
+rest_time = 1/srate
 
 pygame.init()
 
@@ -66,7 +75,6 @@ def create_lsl_mouse_stream(srate):
     return StreamOutlet(info)
 
 def main():
-    sample_rate = 80
     outlet = create_lsl_mouse_stream(sample_rate)
     start_time = local_clock()
     sent_samples = 0
@@ -74,7 +82,7 @@ def main():
     try:
         while True:
             elapsed_time = local_clock() - start_time
-            required_samples = int(sample_rate * elapsed_time) - sent_samples
+            required_samples = int(srate * elapsed_time) - sent_samples
             if required_samples > 0:
                 for sample_ix in range(required_samples):
                     # get sample for Stream
@@ -84,7 +92,7 @@ def main():
                     sent_samples += required_samples
                     jj += 1
             # now send it and wait for a bit before trying again.
-            # time.sleep(0.0125)  # The sleep time is 1/srate
+            time.sleep(rest_time)  # The sleep time is 1/srate
     except KeyboardInterrupt:
         pass
     print("Mouse stream Stopped")

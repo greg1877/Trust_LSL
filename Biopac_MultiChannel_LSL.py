@@ -13,10 +13,11 @@ from pylsl import StreamInfo, StreamOutlet, local_clock
 
 aq_toggle_state = False
 srate = 500
+rest_time = 1/srate
 
 logging.basicConfig(format='%(asctime)s %(message)s',
     level=logging.INFO,
-    filename='logs.txt')
+    filename='biopac_logs.txt')
 
 logger = logging.getLogger()
 
@@ -136,9 +137,9 @@ def send_biopac_data():  ## Make this a thread
                         stream_outlet.push_sample(mysample)
                         sent_samples += required_samples
                 # now send it and wait for a bit before trying again.
-                # time.sleep(0.002) #The sleep time is 1/srate
+                time.sleep(rest_time)  #The sleep time is 1/srate
         except KeyboardInterrupt:
-            pass
+            tidy_up()
 
 
 def tidy_up():
