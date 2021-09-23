@@ -8,6 +8,7 @@ Created on Tue Jul  6 12:38:00 2021
 import pyautogui
 from pylsl import StreamInfo, StreamOutlet, local_clock
 import pygame
+import time
 import logging
 
 logging.basicConfig(format='%(asctime)s %(message)s',
@@ -75,7 +76,7 @@ def create_lsl_mouse_stream(srate):
     return StreamOutlet(info)
 
 def main():
-    outlet = create_lsl_mouse_stream(sample_rate)
+    outlet = create_lsl_mouse_stream(srate)
     start_time = local_clock()
     sent_samples = 0
     jj = 0

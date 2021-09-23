@@ -117,7 +117,7 @@ def send_biopac_data():  ## Make this a thread
         send_request = input("Press Y to begin streaming data")
         if send_request.lower() == "y":
             print("now sending data...")
-            logger.info("Begin ending data")
+            logger.info("Begin sending data")
             print("Press Ctrl-c to stop sending")
 
         start_time = local_clock()
@@ -143,17 +143,17 @@ def send_biopac_data():  ## Make this a thread
 
 
 def tidy_up():
-    # %% TURN OFF THE ACQUISITION FROM THE COMMAND LINE
-    acq_server.toggleAcquisition()
-    logger.info("Toggled Biopac Acquisition")
-    print("Toggled Biopac Acquisition... wait 5 seconds ")
-    time.sleep(5)
-
     # %% STOP THE SERVER
     data_server.Stop()
     logger.info("Stopped data server")
     print("Stopping the data server ")
-    time.sleep(1)
+    time.sleep(2)
+
+    # %% TURN OFF THE ACQUISITION FROM THE COMMAND LINE
+    acq_server.toggleAcquisition()
+    logger.info("Toggled Biopac Acquisition")
+    print("Toggled Biopac Acquisition... wait 5 seconds ")
+    time.sleep(2)
 
     print("Cleaning up...")
     del data_server
