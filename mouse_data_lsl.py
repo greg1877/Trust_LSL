@@ -9,6 +9,7 @@ import pyautogui
 from pylsl import StreamInfo, StreamOutlet, local_clock
 import pygame
 import time
+from datetime import datetime
 import logging
 
 logging.basicConfig(format='%(asctime)s %(message)s',
@@ -25,7 +26,8 @@ pygame.init()
 def query_mouse_position():
     mPos = pyautogui.position()
     mButton = pygame.mouse.get_pressed()
-    return [mPos.x, mPos.y, int(mButton[0]), int(mButton[1]), int(mButton[2])]
+    mtime = datetime.now().strftime("%H:%M:%S:%MS")
+    return [mPos.x, mPos.y, int(mButton[0]), int(mButton[1]), int(mButton[2]), mtime]
 
 
 def get_screen_size():
@@ -50,8 +52,8 @@ class StreamData:
 def create_lsl_mouse_stream(srate):
     name = 'Mouse_Info'
     stream_type = 'Standard_Input'
-    n_channels = 5
-    channel_names = ["x_mouse", "y_mouse", "left_button_press", "right_button_press", "middle_button_press"]
+    n_channels = 6
+    channel_names = ["x_m", "y_m", "left_button", "right_button", "middle_button", "press_time"]
 
     help_string = 'SendData.py -s <sampling_rate> -n <stream_name> -t <stream_type>'
     info = StreamInfo(name, stream_type, n_channels, srate, 'float32', 'myuid34234')
