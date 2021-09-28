@@ -2,7 +2,6 @@ import mouse
 from datetime import datetime
 
 
-
 try:
  while True:
      a=mouse.is_pressed(button="left")
@@ -10,5 +9,6 @@ try:
          now = datetime.now()
          current_time = now.strftime("%H:%M:%S:%MS")
          print("current time = ", current_time)
+         for i in range(4)
 except KeyboardInterrupt:
     pass

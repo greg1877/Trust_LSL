@@ -9,15 +9,30 @@ import sys
 import time
 import logging
 import keyboard
+from datetime import datetime
 from pylsl import StreamInfo, StreamOutlet, local_clock
 
 aq_toggle_state = False
 srate = 500
 rest_time = 1/srate
 
+
+def get_time_vec():
+    year = datetime.now().strftime("%Y")
+    month = datetime.now().strftime("%m")
+    day = datetime.now().strftime("%d")
+    hour = datetime.now().strftime("%H")
+    minute = datetime.now().strftime("%M")
+    second = datetime.now().strftime("%S")
+    micro_second = datetime.now().strftime("%f")
+    right_now = int(year + month + day + hour + minute + second + micro_second)
+    return right_now
+
+fileName = "biopac_stream_" + str(get_time_vec()) + ".log"
+
 logging.basicConfig(format='%(asctime)s %(message)s',
-    level=logging.INFO,
-    filename='biopac_logs.txt')
+    level = logging.INFO,
+    filename = fileName)
 
 logger = logging.getLogger()
 

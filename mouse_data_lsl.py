@@ -12,9 +12,22 @@ import time
 from datetime import datetime
 import logging
 
+def get_time_vec():
+    year = datetime.now().strftime("%Y")
+    month = datetime.now().strftime("%m")
+    day = datetime.now().strftime("%d")
+    hour = datetime.now().strftime("%H")
+    minute = datetime.now().strftime("%M")
+    second = datetime.now().strftime("%S")
+    micro_second = datetime.now().strftime("%f")
+    right_now = int(year + month + day + hour + minute + second + micro_second)
+    return right_now
+
+
+fileName = "mouse_stream_" + str(get_time_vec()) + ".log"
 logging.basicConfig(format='%(asctime)s %(message)s',
-    level=logging.INFO,
-    filename='mouse_logs.txt')
+    level = logging.INFO,
+    filename = fileName)
 
 logger = logging.getLogger()
 srate = 80
@@ -26,9 +39,7 @@ pygame.init()
 def query_mouse_position():
     mPos = pyautogui.position()
     mButton = pygame.mouse.get_pressed()
-    mtime = datetime.now().strftime("%H:%M:%S:%MS")
-    return [mPos.x, mPos.y, int(mButton[0]), int(mButton[1]), int(mButton[2]), mtime]
-
+    return [mPos.x, mPos.y, int(mButton[0]), int(mButton[1]), int(mButton[2])]
 
 def get_screen_size():
     screenDim = pyautogui.size()
@@ -52,8 +63,8 @@ class StreamData:
 def create_lsl_mouse_stream(srate):
     name = 'Mouse_Info'
     stream_type = 'Standard_Input'
-    n_channels = 6
-    channel_names = ["x_m", "y_m", "left_button", "right_button", "middle_button", "press_time"]
+    n_channels = 5
+    channel_names = ["x_m", "y_m", "left_button", "right_button", "middle_button"]
 
     help_string = 'SendData.py -s <sampling_rate> -n <stream_name> -t <stream_type>'
     info = StreamInfo(name, stream_type, n_channels, srate, 'float32', 'myuid34234')
@@ -74,6 +85,7 @@ def create_lsl_mouse_stream(srate):
         ch.append_child_value("label", label)
 
     print("Mouse stream created. Now sending data...")
+    logger.info("Started mouse stream")
     print("Press Ctrl-c to stop sending")
     return StreamOutlet(info)
 
@@ -99,10 +111,12 @@ def main():
     except KeyboardInterrupt:
         pass
     print("Mouse stream Stopped")
+    logger.info("Stopped mouse stream")
     print("Cleaning up...")
 
     ####### STOP HERE: START LAB_RECORDER TO OBTAIN DATA FROM THE STREAM #########
     del outlet
+    logger.info("Stream vars deleted")
 
 
 if __name__ == '__main__':
