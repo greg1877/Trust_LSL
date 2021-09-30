@@ -28,7 +28,7 @@ def get_time_vec():
     right_now = int(year + month + day + hour + minute + second + micro_second)
     return right_now
 
-fileName = "biopac_stream_" + str(get_time_vec()) + ".log"
+fileName = "bp_s_" + str(get_time_vec()) + ".log"
 
 logging.basicConfig(format='%(asctime)s %(message)s',
     level = logging.INFO,

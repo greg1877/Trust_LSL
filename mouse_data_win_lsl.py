@@ -30,7 +30,7 @@ logging.basicConfig(format='%(asctime)s %(message)s',
     filename = fileName)
 
 logger = logging.getLogger()
-srate = 80
+srate = 2000
 rest_time = 1/srate
 
 # Query Mouse Position from Windows
@@ -62,12 +62,12 @@ class StreamData:
 
 def create_lsl_mouse_stream(srate):
     name = 'Mouse_Info'
-    stream_type = 'Standard_Input'
+    stream_type = 'Screen_Input'
     n_channels = 5
     channel_names = ["x_m", "y_m", "left_button", "right_button", "middle_button"]
 
     help_string = 'SendData.py -s <sampling_rate> -n <stream_name> -t <stream_type>'
-    info = StreamInfo(name, stream_type, n_channels, srate, 'float32', 'myuid34234')
+    info = StreamInfo(name, stream_type, n_channels, srate, 'float32', 'myuid123456')
 
     screenDim= get_screen_size()
 

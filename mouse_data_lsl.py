@@ -24,7 +24,7 @@ def get_time_vec():
     return right_now
 
 
-fileName = "mouse_stream_" + str(get_time_vec()) + ".log"
+fileName = "m_s_" + str(get_time_vec()) + ".log"
 logging.basicConfig(format='%(asctime)s %(message)s',
     level = logging.INFO,
     filename = fileName)
