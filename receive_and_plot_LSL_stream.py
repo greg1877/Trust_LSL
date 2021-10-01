@@ -98,28 +98,47 @@ class MarkerInlet(Inlet):
             for string, ts in zip(strings, timestamps):
                 plt.addItem(pg.InfiniteLine(ts, angle=90, movable=False, label=string[0]))
 
-def plot_stream_type(streams, inlets):
-    # Create the pyqtgraph window(s)
-    pw = pg.plot(title='LSL Plot')
+def main():
+    # first resolve all streams that could be shown
+    print("looking for streams")
+    streams = pylsl.resolve_streams()
+    stream_types = ["EEG", "Biophys", "Mouse_Input", "Eyetracker"]
+    inlets: List[Inlet] = []
+
+    for idx in range(len(streams)):
+        print("Found stream type "+ streams[idx].type() + " ")
+
+    print("EEG                   press 1")
+    print("Biophys               press 2")
+    print("Mouse and Eyetracker  press 3")
+    select_stream_type = int(input("Please select a stream type: "))
+
+    if select_stream_type == 3:
+        streams_to_plot = [pylsl.resolve_byprop("type", stream_types[2], timeout=2)[0],
+                           pylsl.resolve_byprop("type", stream_types[3], timeout=2)[0]]
+    else:
+        streams_to_plot = pylsl.resolve_byprop("type", stream_types[select_stream_type-1], timeout=2)
+
+    # Create the pyqtgraph window
+    pw = pg.plot(title=stream_types[select_stream_type-1])
     plt = pw.getPlotItem()
     plt.enableAutoRange(x=False, y=True)
 
     # iterate over found streams, creating specialized inlet objects that will
     # handle plotting the data
-    l=len(streams)
-    for idx in range(l):
-        if streams[idx].type() == 'Markers':
-            if streams[idx].nominal_srate() != pylsl.IRREGULAR_RATE \
-                    or streams[idx].channel_format() != pylsl.cf_string:
-                print('Invalid marker stream ' + streams[idx].name())
-            print('Adding marker inlet: ' + streams[idx].name())
-            inlets.append(MarkerInlet(streams[idx]))
-        elif streams[idx].nominal_srate() != pylsl.IRREGULAR_RATE \
-                and streams[idx].channel_format() != pylsl.cf_string:
-            print('Adding data inlet: ' + streams[idx].name())
-            inlets.append(DataInlet(streams[idx], plt))
+    for info in streams_to_plot:
+        if info.type() == 'Markers':
+            if info.nominal_srate() != pylsl.IRREGULAR_RATE \
+                    or info.channel_format() != pylsl.cf_string:
+                print('Invalid marker stream ' + info.name())
+            print('Adding marker inlet: ' + info.name())
+            inlets.append(MarkerInlet(info))
+        elif info.nominal_srate() != pylsl.IRREGULAR_RATE \
+                and info.channel_format() != pylsl.cf_string:
+            print('Adding data inlet: ' + info.name())
+            inlets.append(DataInlet(info, plt))
         else:
-            print('Don\'t know what to do with stream ' + streams[idx].name())
+            print('Don\'t know what to do with stream ' + info.name())
 
     def scroll():
         """Move the view so the data appears to scroll"""
@@ -154,3 +173,6 @@ def plot_stream_type(streams, inlets):
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
 
+
+if __name__ == '__main__':
+    main()

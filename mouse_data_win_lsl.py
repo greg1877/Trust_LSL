@@ -62,7 +62,7 @@ class StreamData:
 
 def create_lsl_mouse_stream(srate):
     name = 'Mouse_Info'
-    stream_type = 'Screen_Input'
+    stream_type = 'Mouse_Input'
     n_channels = 5
     channel_names = ["x_m", "y_m", "left_button", "right_button", "middle_button"]
 
