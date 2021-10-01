@@ -13,6 +13,7 @@ import numpy as np
 import math
 import pylsl
 import pyqtgraph as pg
+from pyqtgraph import PlotWindow
 from pyqtgraph.Qt import QtCore, QtGui
 from typing import List
 

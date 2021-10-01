@@ -98,17 +98,7 @@ class MarkerInlet(Inlet):
             for string, ts in zip(strings, timestamps):
                 plt.addItem(pg.InfiniteLine(ts, angle=90, movable=False, label=string[0]))
 
-
-def main():
-    # firstly resolve all streams that could be shown
-    inlets: List[Inlet] = []
-    print("looking for streams")
-    streams = pylsl.resolve_streams()
-
-    print("Found " + str(len(streams)) + " stream types")
-    for i in range(len(streams)):
-        print(streams[i].type())
-
+def plot_stream_type(streams, inlets):
     # Create the pyqtgraph window(s)
     pw = pg.plot(title='LSL Plot')
     plt = pw.getPlotItem()
@@ -116,19 +106,20 @@ def main():
 
     # iterate over found streams, creating specialized inlet objects that will
     # handle plotting the data
-    for info in streams:
-        if info.type() == 'Markers':
-            if info.nominal_srate() != pylsl.IRREGULAR_RATE \
-                    or info.channel_format() != pylsl.cf_string:
-                print('Invalid marker stream ' + info.name())
-            print('Adding marker inlet: ' + info.name())
-            inlets.append(MarkerInlet(info))
-        elif info.nominal_srate() != pylsl.IRREGULAR_RATE \
-                and info.channel_format() != pylsl.cf_string:
-            print('Adding data inlet: ' + info.name())
-            inlets.append(DataInlet(info, plt))
+    l=len(streams)
+    for idx in range(l):
+        if streams[idx].type() == 'Markers':
+            if streams[idx].nominal_srate() != pylsl.IRREGULAR_RATE \
+                    or streams[idx].channel_format() != pylsl.cf_string:
+                print('Invalid marker stream ' + streams[idx].name())
+            print('Adding marker inlet: ' + streams[idx].name())
+            inlets.append(MarkerInlet(streams[idx]))
+        elif streams[idx].nominal_srate() != pylsl.IRREGULAR_RATE \
+                and streams[idx].channel_format() != pylsl.cf_string:
+            print('Adding data inlet: ' + streams[idx].name())
+            inlets.append(DataInlet(streams[idx], plt))
         else:
-            print('Don\'t know what to do with stream ' + info.name())
+            print('Don\'t know what to do with stream ' + streams[idx].name())
 
     def scroll():
         """Move the view so the data appears to scroll"""
@@ -163,6 +154,3 @@ def main():
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
 
-
-if __name__ == '__main__':
-    main()
