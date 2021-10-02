@@ -98,7 +98,7 @@ class MarkerInlet(Inlet):
             for string, ts in zip(strings, timestamps):
                 plt.addItem(pg.InfiniteLine(ts, angle=90, movable=False, label=string[0]))
 
-def main():
+def make_plots():
     # first resolve all streams that could be shown
     print("looking for streams")
     streams = pylsl.resolve_streams()
@@ -172,6 +172,11 @@ def main():
     # Start Qt event loop unless running in interactive mode or using pyside.
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
+
+
+def main():
+    make_plots()
+    make_plots()
 
 
 if __name__ == '__main__':

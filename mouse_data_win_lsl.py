@@ -33,17 +33,17 @@ logger = logging.getLogger()
 srate = 2000
 rest_time = 1/srate
 
+screenDim = pyautogui.size()
+
 # Query Mouse Position from Windows
 def query_mouse_position():
     x, y = mouse.get_position()
+    x = x/screenDim.width
+    y = y/screenDim.height
+
     return [x, y, int(mouse.is_pressed(button="left")),
             int(mouse.is_pressed(button="middle")),
             int(mouse.is_pressed(button="right"))]
-
-
-def get_screen_size():
-    screenDim = pyautogui.size()
-    return [screenDim.width, screenDim.height]
 
 
 class StreamData:
@@ -68,8 +68,6 @@ def create_lsl_mouse_stream(srate):
 
     help_string = 'SendData.py -s <sampling_rate> -n <stream_name> -t <stream_type>'
     info = StreamInfo(name, stream_type, n_channels, srate, 'float32', 'myuid123456')
-
-    screenDim= get_screen_size()
 
     # append some meta-data
     info.desc().append_child_value("manufacturer", "none")
