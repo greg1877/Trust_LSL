@@ -108,13 +108,13 @@ def make_plots():
     for idx in range(len(streams)):
         print("Found stream type "+ streams[idx].type() + " ")
 
-    print("EEG            press 1")
-    print("Biophys        press 2")
-    print("Mouse          press 3")
-    print("Eyetracker     press 4")
+    print("EEG............press 1")
+    print("Biophys........press 2")
+    print("Mouse..........press 3")
+    print("Eyetracker.....press 4")
     select_stream_type = int(input("Please select a stream type: "))
 
-    streams_to_plot = pylsl.resolve_byprop("type", stream_types[select_stream_type-1], timeout=2)
+    stream_to_plot = pylsl.resolve_byprop("type", stream_types[select_stream_type - 1], timeout=2)
 
     # Create the pyqtgraph window
     pw = pg.plot(title=stream_types[select_stream_type-1])
@@ -123,7 +123,7 @@ def make_plots():
 
     # iterate over found streams, creating specialized inlet objects that will
     # handle plotting the data
-    for info in streams_to_plot:
+    for info in stream_to_plot:
         if info.type() == 'Markers':
             if info.nominal_srate() != pylsl.IRREGULAR_RATE \
                     or info.channel_format() != pylsl.cf_string:

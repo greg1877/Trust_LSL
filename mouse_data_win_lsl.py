@@ -38,8 +38,8 @@ screenDim = pyautogui.size()
 # Query Mouse Position from Windows
 def query_mouse_position():
     x, y = mouse.get_position()
-    x = x/screenDim.width
-    y = y/screenDim.height
+    # x = x/screenDim.width
+    # y = y/screenDim.height
     return [x, y, int(mouse.is_pressed(button="left")),
         int(mouse.is_pressed(button="middle")),
         int(mouse.is_pressed(button="right"))]
