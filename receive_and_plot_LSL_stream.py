@@ -40,7 +40,7 @@ class Inlet:
 class DataInlet(Inlet):
     """A DataInlet represents an inlet with continuous, multi-channel data that
     should be plotted as multiple lines."""
-    dtypes = [[], np.float32, np.float64, None, np.int32, np.int16, np.int8, np.int64]
+    dtypes = [[], np.float32, np.float64, None, np.int32, np.int16, np.int8, np.int64, np.nan]
 
     def __init__(self, info: pylsl.StreamInfo, plt: pg.PlotItem):
         super().__init__(info)
@@ -108,16 +108,13 @@ def make_plots():
     for idx in range(len(streams)):
         print("Found stream type "+ streams[idx].type() + " ")
 
-    print("EEG                   press 1")
-    print("Biophys               press 2")
-    print("Mouse and Eyetracker  press 3")
+    print("EEG            press 1")
+    print("Biophys        press 2")
+    print("Mouse          press 3")
+    print("Eyetracker     press 4")
     select_stream_type = int(input("Please select a stream type: "))
 
-    if select_stream_type == 3:
-        streams_to_plot = [pylsl.resolve_byprop("type", stream_types[2], timeout=2)[0],
-                           pylsl.resolve_byprop("type", stream_types[3], timeout=2)[0]]
-    else:
-        streams_to_plot = pylsl.resolve_byprop("type", stream_types[select_stream_type-1], timeout=2)
+    streams_to_plot = pylsl.resolve_byprop("type", stream_types[select_stream_type-1], timeout=2)
 
     # Create the pyqtgraph window
     pw = pg.plot(title=stream_types[select_stream_type-1])
@@ -176,8 +173,6 @@ def make_plots():
 
 def main():
     make_plots()
-    make_plots()
-
 
 if __name__ == '__main__':
     main()
