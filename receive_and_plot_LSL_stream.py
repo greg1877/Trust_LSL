@@ -7,9 +7,14 @@ from typing import List
 
 # Basic parameters for the plotting window
 plot_duration = 5  # how many seconds of data to show
-update_interval = 60  # ms between screen updates
+update_interval = 15  # ms between screen updates
 pull_interval = 500  # ms between each pull operation
 
+def check_nan(num):
+    if float('-inf') < float(num) < float('inf'):
+        return False
+    else:
+        return True
 
 class Inlet:
     """Base class to represent a plottable inlet"""
@@ -22,7 +27,7 @@ class Inlet:
         # same time domain as the local lsl_clock()
         # (see https://labstreaminglayer.readthedocs.io/projects/liblsl/ref/enums.html#_CPPv414proc_clocksync)
         # and dejitter timestamps
-        self.inlet = pylsl.StreamInlet(info, max_buflen=plot_duration,
+        self.inlet = pylsl.StreamInlet(info, max_chunklen=plot_duration, max_buflen=plot_duration,
                                        processing_flags=pylsl.proc_clocksync | pylsl.proc_dejitter)
         # store the name and channel count
         self.name = info.name()
@@ -40,7 +45,7 @@ class Inlet:
 class DataInlet(Inlet):
     """A DataInlet represents an inlet with continuous, multi-channel data that
     should be plotted as multiple lines."""
-    dtypes = [[], np.float32, np.float64, None, np.int32, np.int16, np.int8, np.int64, np.nan]
+    dtypes = [[], np.float32, np.float64, None, np.int32, np.int16, np.int8, np.int64]
 
     def __init__(self, info: pylsl.StreamInfo, plt: pg.PlotItem):
         super().__init__(info)
@@ -98,7 +103,7 @@ class MarkerInlet(Inlet):
             for string, ts in zip(strings, timestamps):
                 plt.addItem(pg.InfiniteLine(ts, angle=90, movable=False, label=string[0]))
 
-def make_plots():
+def main():
     # first resolve all streams that could be shown
     print("looking for streams")
     streams = pylsl.resolve_streams()
@@ -113,6 +118,7 @@ def make_plots():
     print("Mouse..........press 3")
     print("Eyetracker.....press 4")
     select_stream_type = int(input("Please select a stream type: "))
+    #select_stream_type = 3
 
     stream_to_plot = pylsl.resolve_byprop("type", stream_types[select_stream_type - 1], timeout=2)
 
@@ -164,15 +170,13 @@ def make_plots():
     pull_timer.timeout.connect(update)
     pull_timer.start(pull_interval)
 
+
     import sys
 
     # Start Qt event loop unless running in interactive mode or using pyside.
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
 
-
-def main():
-    make_plots()
 
 if __name__ == '__main__':
     main()
