@@ -4,6 +4,7 @@ import pylsl
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 from typing import List
+from collections import deque
 
 # Basic parameters for the plotting window
 plot_duration = 5  # how many seconds of data to show
@@ -111,20 +112,22 @@ class Graph:
         self.app = QtGui.QApplication([])
         self.win = pg.GraphicsWindow()
 
-        self.p1 = self.win.addPlot(colspan=2, title="hay1")
+        self.p1 = self.win.addPlot(colspan=2, title="EEG")
         self.win.nextRow()
-        self.p2 = self.win.addPlot(colspan=2, title="hay2")
+        self.p2 = self.win.addPlot(colspan=2, title="Biophys")
         self.win.nextRow()
-        self.p3 = self.win.addPlot(colspan=2, title="hay3")
+        self.p3 = self.win.addPlot(colspan=2, title="Mouse")
+        self.win.nextRow()
+        self.p4 = self.win.addPlot(colspan=2, title="Eyetracker")
 
-        self.curve1 = self.p1.plot(title="hay1")
-        self.curve2 = self.p2.plot(title="hay2")
-        self.curve3 = self.p3.plot(title="hay3")
+        self.curve1 = self.p1.plot(title="EEG")
+        self.curve2 = self.p2.plot(title="Biophys")
+        self.curve3 = self.p3.plot(title="Mouse")
+        self.curve4 = self.p4.plot(title="Eyetracker")
 
-        graphUpdateSpeedMs = 50
         timer = QtCore.QTimer()  # to create a thread that calls a function at intervals
         timer.timeout.connect(self.update)  # the update function keeps getting called at intervals
-        timer.start(graphUpdateSpeedMs)
+        timer.start(update_interval)
         QtGui.QApplication.instance().exec_()
 
     def update(self):
@@ -135,6 +138,7 @@ class Graph:
         self.curve1.setData(self.dat)
         self.curve2.setData(self.dat)
         self.curve3.setData(self.dat)
+        self.curve4.setData(self.dat)
         self.app.processEvents()
 
 
@@ -145,8 +149,11 @@ def main():
     stream_types = ["EEG", "Biophys", "Mouse_Input", "Eyetracker"]
     inlets: List[Inlet] = []
 
-    for idx in range(len(streams)):
-        print("Found stream type "+ streams[idx].type() + " ")
+    if len(streams)>=1:
+        for idx in range(len(streams)):
+            print("Found stream type "+ streams[idx].type() + " ")
+    else:
+        print("Could not find a stream")
 
     print("EEG............press 1")
     print("Biophys........press 2")
