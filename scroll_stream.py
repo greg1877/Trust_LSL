@@ -105,43 +105,6 @@ class MarkerInlet(Inlet):
                 plt.addItem(pg.InfiniteLine(ts, angle=90, movable=False, label=string[0]))
 
 
-class Graph:
-    def __init__(self, ):
-        self.dat = deque()
-        self.maxLen = 50  # max number of data points to show on graph
-        self.app = QtGui.QApplication([])
-        self.win = pg.GraphicsWindow()
-
-        self.p1 = self.win.addPlot(colspan=2, title="EEG")
-        self.win.nextRow()
-        self.p2 = self.win.addPlot(colspan=2, title="Biophys")
-        self.win.nextRow()
-        self.p3 = self.win.addPlot(colspan=2, title="Mouse")
-        self.win.nextRow()
-        self.p4 = self.win.addPlot(colspan=2, title="Eyetracker")
-
-        self.curve1 = self.p1.plot(title="EEG")
-        self.curve2 = self.p2.plot(title="Biophys")
-        self.curve3 = self.p3.plot(title="Mouse")
-        self.curve4 = self.p4.plot(title="Eyetracker")
-
-        timer = QtCore.QTimer()  # to create a thread that calls a function at intervals
-        timer.timeout.connect(self.update)  # the update function keeps getting called at intervals
-        timer.start(update_interval)
-        QtGui.QApplication.instance().exec_()
-
-    def update(self):
-        if len(self.dat) > self.maxLen:
-            self.dat.popleft()  # remove oldest
-        self.dat.append(random.randint(0, 100))
-
-        self.curve1.setData(self.dat)
-        self.curve2.setData(self.dat)
-        self.curve3.setData(self.dat)
-        self.curve4.setData(self.dat)
-        self.app.processEvents()
-
-
 def main():
     # first resolve all streams that could be shown
     print("looking for streams")
