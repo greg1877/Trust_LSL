@@ -11,10 +11,7 @@ from pylsl import StreamInfo, StreamOutlet, local_clock
 import time
 from datetime import datetime
 import logging
-import os
-path = "C:/Users/GB_SurfaceBook/LSL_Executables/Standard Input"
-os.chdir(path)
-os.system("keyboard.exe")
+
 
 def get_time_vec():
     year = datetime.now().strftime("%Y")

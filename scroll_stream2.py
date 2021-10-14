@@ -117,48 +117,18 @@ def main():
     else:
         print("Could not find a stream")
 
-    print("EEG............press 1")
-    print("Biophys........press 2")
-    print("Mouse..........press 3")
-    print("Eyetracker.....press 4")
-    select_stream_type = int(input("Please select a stream type: "))
-
-    #streams_to_plot = pylsl.resolve_byprop("type", stream_types[select_stream_type - 1], timeout=2)
-    streams_to_plot = pylsl.resolve_streams()
-
     # Create the pyqtgraph window
     win = pg.GraphicsLayoutWidget(show=True)
     win.setWindowTitle('LSL Streams')
     pw = []
     for idx in range(len(streams)):
-        pw.append(win.addPlot(row=idx, col=0, colspan=2, title=stream_types[select_stream_type-1]))
+        pw.append(win.addPlot(row=idx, col=0, colspan=2, title=streams[idx].name()))
         pw[idx].enableAutoRange(x=False, y=True)
         print('Adding data inlet: ' + streams[idx].name())
         inlets.append(DataInlet(streams[idx], pw[idx]))
 
-        #pw[idx].plt = pw[idx].getPlotItem()
-        #pw[idx].plt.enableAutoRange(x=False, y=True)
-
-    #pw = pg.plot(title=stream_types[select_stream_type-1])
-    #plt = pw.getPlotItem()
-    #plt.enableAutoRange(x=False, y=True)
-
     # iterate over found streams, creating specialized inlet objects that will
     # handle plotting the data
-    for info in streams:
-        if info.type() == 'Markers':
-            if info.nominal_srate() != pylsl.IRREGULAR_RATE \
-                    or info.channel_format() != pylsl.cf_string:
-                print('Invalid marker stream ' + info.name())
-            print('Adding marker inlet: ' + info.name())
-            inlets.append(MarkerInlet(info))
-        elif info.nominal_srate() != pylsl.IRREGULAR_RATE \
-                and info.channel_format() != pylsl.cf_string:
-            print('Adding data inlet: ' + info.name())
-            inlets.append(DataInlet(info, plt))
-        else:
-            print('Don\'t know what to do with stream ' + info.name())
-
     def scroll():
         """Move the view so the data appears to scroll"""
         # We show data only up to a timepoint shortly before the current time
