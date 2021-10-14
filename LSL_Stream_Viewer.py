@@ -108,7 +108,7 @@ def main():
     # first resolve all streams that could be shown
     print("looking for streams")
     streams = pylsl.resolve_streams()
-    stream_types = ["EEG", "Biophys", "Mouse_Input", "Eyetracker"]
+    stream_types = ["EEG", "PsychoPhys", "Mouse_Input", "Eyetracker"]
     inlets: List[Inlet] = []
 
     if len(streams)>=1:
@@ -121,11 +121,24 @@ def main():
     win = pg.GraphicsLayoutWidget(show=True)
     win.setWindowTitle('LSL Streams')
     pw = []
+    plt_count = 0
     for idx in range(len(streams)):
-        pw.append(win.addPlot(row=idx, col=0, colspan=2, title=streams[idx].name()))
-        pw[idx].enableAutoRange(x=False, y=True)
-        print('Adding data inlet: ' + streams[idx].name())
-        inlets.append(DataInlet(streams[idx], pw[idx]))
+        if streams[idx].type() == 'Markers':
+            if streams[idx].nominal_srate() != pylsl.IRREGULAR_RATE \
+                    or streams[idx].channel_format() != pylsl.cf_string:
+                print('Invalid marker stream ' + streams[idx].name())
+            print('Adding marker inlet: ' + streams[idx].name())
+            inlets.append(MarkerInlet(streams[idx]))
+        elif streams[idx].nominal_srate() != pylsl.IRREGULAR_RATE \
+                and streams[idx].channel_format() != pylsl.cf_string:
+            pw.append(win.addPlot(row=plt_count, col=0, colspan=2, title=streams[idx].name()))
+            pw[plt_count].enableAutoRange(x=False, y=True)
+            print('Adding data inlet: ' + streams[idx].name())
+            inlets.append(DataInlet(streams[idx], pw[plt_count]))
+            plt_count += 1
+        else:
+            print('Don\'t know what to do with stream ' + streams[idx].name())
+
 
     # iterate over found streams, creating specialized inlet objects that will
     # handle plotting the data
@@ -135,7 +148,7 @@ def main():
         # so new data doesn't suddenly appear in the middle of the plot
         fudge_factor = pull_interval * .002
         plot_time = pylsl.local_clock()
-        for idx in range(len(streams)):
+        for idx in range(len(pw)):
             pw[idx].setXRange(plot_time - plot_duration + fudge_factor, plot_time - fudge_factor)
 
     def update():
@@ -144,7 +157,7 @@ def main():
         # call pull_and_plot for each inlet.
         # Special handling of inlet types (markers, continuous data) is done in
         # the different inlet classes.
-        for idx in range(len(streams)):
+        for idx in range(len(pw)):
             for inlet in inlets:
                 inlet.pull_and_plot(mintime, pw[idx])
 

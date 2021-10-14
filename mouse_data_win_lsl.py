@@ -67,7 +67,7 @@ def create_lsl_mouse_stream(srate):
     channel_names = ["x_m", "y_m", "left_button", "right_button", "middle_button"]
 
     help_string = 'SendData.py -s <sampling_rate> -n <stream_name> -t <stream_type>'
-    info = StreamInfo(name, stream_type, n_channels, srate, 'float32', 'myuid123456')
+    info = StreamInfo(name, stream_type, n_channels, srate, 'float32', 'myuid11111')
 
     # append some meta-data
     info.desc().append_child_value("manufacturer", "none")

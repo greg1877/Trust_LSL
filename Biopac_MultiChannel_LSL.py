@@ -85,13 +85,13 @@ def create_biopac_stream():
     global stream_info, stream_outlet
 
     # %% STREAM INFORMATION
-    name = 'Biopac_LSL'
+    name = 'Biopac Data'
     stream_type = 'PsychoPhys'
     n_channels = 5
     channel_names = ["EDA", "ECG", "BPM", "RR-Interval", "ECG Wave Amplitude"]
 
     help_string = 'SendData.py -s <sampling_rate> -n <stream_name> -t <stream_type>'
-    stream_info = StreamInfo(name, stream_type, n_channels, srate, 'float32', 'myuid34234')
+    stream_info = StreamInfo(name, stream_type, n_channels, srate, 'float32', 'myuid33333')
 
     # append some meta-data
     stream_info.desc().append_child_value("manufacturer", "Biopac")

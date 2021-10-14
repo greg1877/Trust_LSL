@@ -1,4 +1,4 @@
-import scroll_stream as rcp
+from test import scroll_stream as rcp
 from typing import List
 import pylsl
 import threading
