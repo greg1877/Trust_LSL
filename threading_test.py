@@ -4,37 +4,20 @@ import logging
 import threading
 import time
 from datetime import datetime
+import os
 
-now = datetime.now()
-current_time = now.strftime("%H:%M:%S")
-print("current time = ", current_time)
+path = "C:/Users/GB_SurfaceBook/LSL_Executables/Standard Input"
+os.chdir(path)
 
-log_file_name = "BIOPAC_LSL_" + datetime.now().strftime("%H:%M:%S:%MS") + ".log"
-FORMAT = '%(asctime)s %(message)s'
-logging.basicConfig(format='%(asctime)s %(message)s',
-    level=logging.INFO,
-    filename='logs.txt')
+def thread_function1():
+    os.system("keyboard.exe")
 
-logger = logging.getLogger()
-logger.debug('This message should go to the log file')
-logger.info('So should this')
-logger.warning('And this, too')
+def thread_function2():
+    os.system("mouse.exe")
 
-def thread_function(name):
-    logger.info("Thread %s: starting", name)
-    time.sleep(2)
-    logger.info("Thread %s: finishing", name)
+x1 = threading.Thread(target=thread_function1)
+x2 = threading.Thread(target=thread_function2)
+x1.start()
+x2.start()
 
-
-if __name__ == "__main__":
-    format = "%(asctime)s: %(message)s"
- #   logger.basicConfig(format=format, level=logging.INFO,
- #                       datefmt="%H:%M:%S")
-
-    logger.info("Main    : before creating thread")
-    x = threading.Thread(target=thread_function, args=(1,))
-    logger.info("Main    : before running thread")
-    x.start()
-    logger.info("Main    : wait for the thread to finish")
-    # x.join()
-    logger.info("Main    : all done")
+os.system("Stop-Process -Name 'keyboard'")

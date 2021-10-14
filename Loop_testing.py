@@ -1,5 +1,16 @@
 
+import os
+path = "C:/Users/GB_SurfaceBook/LSL_Executables/Standard Input"
+os.chdir(path)
+os.system("keyboard.exe")
+os.system("mouse.exe")
 
+import subprocess
+subprocess.run("python mouse_data_win_lsl.py & python Biopac_MultiChannel_LSL.py", shell=True)
+
+import subprocess
+subprocess.call(["C:/Users/GB_SurfaceBook/LSL_Executables/Standard Input/keyboard.exe"])
+subprocess.call(["C:/Users/GB_SurfaceBook/LSL_Executables/Standard Input/mouse.exe"])
 
 # define Python user-defined exceptions
 class Error(Exception):

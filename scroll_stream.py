@@ -123,7 +123,6 @@ def main():
     print("Mouse..........press 3")
     print("Eyetracker.....press 4")
     select_stream_type = int(input("Please select a stream type: "))
-    #select_stream_type = 3
 
     stream_to_plot = pylsl.resolve_byprop("type", stream_types[select_stream_type - 1], timeout=2)
 
