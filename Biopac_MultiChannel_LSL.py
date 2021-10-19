@@ -8,7 +8,6 @@ import biopacndt
 import sys
 import time
 import logging
-import keyboard
 from datetime import datetime
 from pylsl import StreamInfo, StreamOutlet, local_clock
 
@@ -129,7 +128,7 @@ def send_biopac_data():  ## Make this a thread
     if not aq_toggle_state:
         toggle_aquisition()
     else:
-        send_request = input("Press Y to begin streaming data")
+        send_request = input("Press Y to begin streaming data ")
         if send_request.lower() == "y":
             print("now sending data...")
             logger.info("Begin sending data")
@@ -182,8 +181,7 @@ def main():
     start_biopac_server()   # start server
     create_biopac_stream()  # create the stream
     toggle_aquisition()     # toggle the aquisition
-    # ask to start the aquisition and check the keyboard to see if some key hasn't been pressed.  If the key is pressed,
-    # the aquisition will send null
+
     send_biopac_data()
 
 if __name__ == '__main__':

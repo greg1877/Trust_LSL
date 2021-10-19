@@ -4,7 +4,6 @@ import pylsl
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 from typing import List
-from collections import deque
 
 # Basic parameters for the plotting window
 plot_duration = 5  # how many seconds of data to show
@@ -108,7 +107,6 @@ def main():
     # first resolve all streams that could be shown
     print("looking for streams")
     streams = pylsl.resolve_streams()
-    stream_types = ["EEG", "PsychoPhys", "Mouse_Input", "Eyetracker"]
     inlets: List[Inlet] = []
 
     if len(streams)>=1:
